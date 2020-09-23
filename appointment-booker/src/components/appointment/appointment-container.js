@@ -5,20 +5,20 @@ import CountryCodes from './country-codes'
 import { bookAppointment as BookAppointment } from '../../services/appointment-service'
 
 import AppointmentView from './appointment-view'
-import { Link } from 'react-router-dom';
 
 class Appointment extends Component {
     state = {
-        firstName: '',
-        lastName: '',
-        email: '',
+        firstName: 'Ramishenouda@yahoo.com',
+        lastName: 'Ramishenouda@yahoo.com',
+        email: 'Ramishenouda@yahoo.com',
         countryCode: '+20',
-        phoneNumber: '',
+        phoneNumber: '1551874208',
         operationCountries: '',
         companyName: '',
         objective: '',
-        description: '',
+        description: 'test',
         openedMenu: '',
+        chooseCompany: false,
         booked: false
     }
 
@@ -26,6 +26,35 @@ class Appointment extends Component {
         event.preventDefault();
         if (this.validateForm()) {
             this.bookAppointment();
+
+            this.state.operationCountries.split(',').forEach(country => {
+                country = country.trim()
+
+                const setValue = new Set();
+
+                let currentValue = localStorage.getItem(country)
+                let value = this.state.companyName.trim();
+
+                if (!currentValue) {
+                    localStorage.setItem(country, value);
+                } else {
+                    currentValue += `, ${value}`;
+                    
+                    currentValue.split(',').map(x => {
+                        setValue.add(x.trim())
+                        return x;
+                    });
+                    
+                    value = '';
+                    setValue.forEach(x => {
+                        value += x + ','
+                    })
+
+                    value = value.slice(0, -1);
+
+                    localStorage.setItem(country, value);
+                }
+            });
         }
     }
 
@@ -126,10 +155,22 @@ class Appointment extends Component {
 
     handleChange = (event) => {
         let name, value = '';
-
+        console.log(event);
         if (event === null) {
-            this.setState({ [this.state.openedMenu]: '' });
+            setTimeout(() => {
+                this.setState({ [this.state.openedMenu]: '' }, () => {
+                    if (this.state.operationCountries.trim() === '' || this.state.operationCountries === undefined) {
+                        this.setState({ chooseCompany: false, companyName: '' })
+                    } else {
+                        this.setState({ chooseCompany: true })
+                    }
+                });
+            }, 50);
             return;
+        }
+
+        if (this.state.openedMenu === 'operationCountries') {
+
         }
 
         if (!event.target) {
@@ -149,16 +190,38 @@ class Appointment extends Component {
                     name = event.name;
                 else 
                     name = this.state.openedMenu;
-                value = event.value;
+                
+                if (event.value)
+                    value = event.value;
+                else
+                    value = ''
             }
         } else {
             name = event.target.name;
             value = event.target.value
         }
 
-        this.setState({[name]: value});
+        this.setState({[name]: value}, () => {
+            if (this.state.operationCountries.trim() === '' || this.state.operationCountries === undefined) {
+                this.setState({ chooseCompany: false })
+            } else {
+                this.setState({ chooseCompany: true })
+            }
+        });
     }
     
+    getCountryValues = (country) => {
+        const values = localStorage.getItem(country);
+        const options = [];
+        if (values) {
+            values.split(',').forEach(x => {
+                options.push({ value: x, name: 'companyName', label: x })
+            })
+        }
+
+        return options;
+    }
+
     render() {
         
         const countryOptions = [
@@ -167,11 +230,42 @@ class Appointment extends Component {
             { value: 'country3', name: 'operationCountries', label: 'Country3' }
         ]
 
-        const companyOptions = [
-            { value: 'company1', name: 'companyName', label: 'Company1' },
-            { value: 'company2', name: 'companyName', label: 'Company2' },
-            { value: 'company3', name: 'companyName', label: 'Company3' }
-        ]
+        let tempOptions = [];
+        const companyOptions = [];
+
+        if (this.state.operationCountries !== '' && this.state.operationCountries !== undefined) {
+            this.state.operationCountries.split(',').forEach(element => {
+                element = element.trim();
+
+                if (element === 'country1') {
+                    tempOptions.push({ value: 'Company1', name: 'companyName', label: 'Company1' });
+                    tempOptions.push({ value: 'Company2', name: 'companyName', label: 'Company2' });
+                }
+
+                if (element === 'country2') {
+                    tempOptions.push({ value: 'Company3', name: 'companyName', label: 'Company3' });
+                }
+
+                const countryValues = this.getCountryValues(element);
+
+                if (countryValues.length > 0) {
+                    tempOptions.push(...countryValues);
+                }
+
+
+                for (let i = 0; i < tempOptions.length; i++) {
+                    let addToList = true;
+                    for (let j = 0; j < companyOptions.length; j++) {                        
+                        if (tempOptions[i].value.toLowerCase() === companyOptions[j].value.toLowerCase()) {
+                            addToList = false;
+                        }
+                    }
+
+                    if (addToList)
+                        companyOptions.push(tempOptions[i]);
+                }
+            });
+        }
 
         const objectiveOptions = [
             { value: 'complaint', name: 'objective', label: 'Complaint' },
@@ -185,15 +279,6 @@ class Appointment extends Component {
                 </option>
             );
         });
-
-        if (this.state.booked)
-            return (
-                <div>
-                    <Link to="/">
-                        Go to Home page
-                    </Link>
-                </div>
-            )
         
         return (
             <AppointmentView
@@ -202,9 +287,10 @@ class Appointment extends Component {
                 setOpenedMenu={this.setOpenedMenu}
                 countryOptions={countryOptions}
                 countryCodesOptions={countryCodesOptions}
-                companyOptions={companyOptions}
+                companyOptions={[...companyOptions]}
                 objectiveOptions={objectiveOptions}
                 state={this.state}
+                booked={this.state.booked}
             />
         );
     }

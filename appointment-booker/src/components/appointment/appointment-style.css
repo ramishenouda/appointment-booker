@@ -68,3 +68,13 @@ input[type=number] {
 .test {
     border-bottom: 2px solid red;
 }
+
+.booked-screen {
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    position: fixed;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}

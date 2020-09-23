@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, Form } from 'react-bootstrap';
+import { Button, Col, Container, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import Select from 'react-select'
@@ -18,6 +18,20 @@ function Appointment(props) {
     const state = props.state
 
     const unvalidStyle = '2px solid rgb(214, 68, 68)'
+
+    if (state.booked)
+    return (
+    <Container className="text-center booked-screen">
+            <div style={{fontSize: 'x-large', fontWeight:'600'}} className="mb-3">
+                Your request is received and someone  will be in touch with you soon
+            </div>
+            <Link to="/">
+                <Button className="button">
+                    Go to Home page
+                </Button>
+            </Link>
+        </Container>
+    )
 
     return (
         <>
@@ -88,6 +102,7 @@ function Appointment(props) {
                     <Form.Group as={Col} style={{ borderBottom: state.validOperationCountries === false ? unvalidStyle : '' }}>
                         <Select
                             onMenuOpen={() => props.setOpenedMenu('operationCountries')}
+                            onFocus={() => props.setOpenedMenu('operationCountries')}
                             placeholder="Operation Countries" 
                             name="operationCountries" 
                             onChange={props.handleChange} 
@@ -110,6 +125,8 @@ function Appointment(props) {
                             onMenuOpen={() => props.setOpenedMenu('companyName')}
                             options={props.companyOptions}
                             onChange={props.handleChange}
+                            isDisabled={!state.chooseCompany}
+                            value={state.openedMenu === 'operationCountries' ? '' : this}
                         />
                     </Form.Group>
                     <Form.Group as={Col} xs={1} className="mt-1 mr-2">
