@@ -123,6 +123,7 @@ function Appointment(props) {
                             placeholder="Company Name" 
                             name="companyName"
                             onMenuOpen={() => props.setOpenedMenu('companyName')}
+                            onFocus={() => props.setOpenedMenu('companyName')}
                             options={props.companyOptions}
                             onChange={props.handleChange}
                             isDisabled={!state.chooseCompany}
@@ -140,6 +141,7 @@ function Appointment(props) {
                 <Form.Group style={{ borderBottom:state.validObjective === false ? unvalidStyle : '' }}>
                     <CreatableSelect
                         onMenuOpen={() => props.setOpenedMenu('objective')}
+                        onFocus={() => props.setOpenedMenu('objective')}
                         placeholder="Objective" 
                         name="objective" 
                         options={props.objectiveOptions}

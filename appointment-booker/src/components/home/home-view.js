@@ -11,13 +11,6 @@ function Home(props) {
         return (
             <div className="sm-view">
                 <div className="iframe-container-sm">
-                    {
-                        /* <iframe src="https://www.youtube.com
-                        /embed/zmZ7Pfjymr0?vq=hd1080&playlist=zmZ7Pfjymr0&mute=1&autoplay
-                        =1&loop=1&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&the
-                        me=light&fs=0&color=white&controls=0&disablekb=1" width="560" heigh
-                        t="315" frameborder="0"></iframe>​ */
-                    }
                     <video width="320" height="240" loop="on" muted="on" autoPlay="on">
                         <source src={PharmacyLogo} type="video/mp4" />
                     </video>

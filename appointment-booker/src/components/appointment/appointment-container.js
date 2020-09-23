@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Notify from '../../services/sweetalert-service'
+import { checkValidation as NumVerify } from '../../services/numverify-service'
 
 import CountryCodes from './country-codes'
 
@@ -12,7 +13,7 @@ class Appointment extends Component {
         firstName: '',
         lastName: '',
         email: '',
-        countryCode: '+20',
+        countryCode: 'EG',
         phoneNumber: '',
         operationCountries: '',
         companyName: '',
@@ -25,38 +26,59 @@ class Appointment extends Component {
 
     requestAppointment = (event) => {
         event.preventDefault();
-        if (this.validateForm()) {
-            this.bookAppointment();
 
-            this.state.operationCountries.split(',').forEach(country => {
-                country = country.trim()
+        let validForm = this.validateForm();
 
-                const setValue = new Set();
-
-                let currentValue = localStorage.getItem(country)
-                let value = this.state.companyName.trim();
-
-                if (!currentValue) {
-                    localStorage.setItem(country, value);
+        NumVerify(this.state.phoneNumber, this.state.countryCode)
+            .then((result) => {
+                if (result.data.valid) {
+                    this.setState({ validPhoneNumber: true });
                 } else {
-                    currentValue += `, ${value}`;
-                    
-                    currentValue.split(',').map(x => {
-                        setValue.add(x.trim())
-                        return x;
-                    });
-                    
-                    value = '';
-                    setValue.forEach(x => {
-                        value += x + ','
-                    })
-
-                    value = value.slice(0, -1);
-
-                    localStorage.setItem(country, value);
+                    this.setState({ validPhoneNumber: false });
+                    validForm = false;
                 }
-            });
-        }
+            }).catch((err) => {
+                console.log(err);
+                if (this.state.phoneNumber.length === 10 || this.state.phoneNumber.length === 11) {
+                    this.setState({ validPhoneNumber: true });
+                } else {
+                    this.setState({ validPhoneNumber: false });
+                    validForm = false;
+                }
+            }).finally(() => {
+                if (validForm) {
+                    this.bookAppointment();
+        
+                    this.state.operationCountries.split(',').forEach(country => {
+                        country = country.trim()
+        
+                        const setValue = new Set();
+        
+                        let currentValue = localStorage.getItem(country)
+                        let value = this.state.companyName.trim();
+        
+                        if (!currentValue) {
+                            localStorage.setItem(country, value);
+                        } else {
+                            currentValue += `, ${value}`;
+                            
+                            currentValue.split(',').map(x => {
+                                setValue.add(x.trim())
+                                return x;
+                            });
+                            
+                            value = '';
+                            setValue.forEach(x => {
+                                value += x + ','
+                            })
+        
+                            value = value.slice(0, -1);
+        
+                            localStorage.setItem(country, value);
+                        }
+                    });
+                }
+            })
     }
 
     bookAppointment = () => {
@@ -80,21 +102,13 @@ class Appointment extends Component {
                 console.log(err);
             });
     }
-
+    
     // todo find a better way in react to check for form validation
-    validateForm = () => {
+    async validateForm () {
         const re = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
         const emailValidation = new RegExp(re).test(this.state.email);
     
         let validForm = true;
-    
-        // todo find an API to check for phoneNumbers
-        if (this.state.phoneNumber.length === 10 || this.state.phoneNumber.length === 11) {
-            this.setState({ validPhoneNumber: true });
-        } else {
-            this.setState({ validPhoneNumber: false });
-            validForm = false;
-        }
     
         if (emailValidation) {
             this.setState({ validEmail: true });
@@ -147,7 +161,7 @@ class Appointment extends Component {
             this.setState({ validDescription: false })
             validForm = false
         }
-    
+
         return validForm;
     }
 
@@ -161,7 +175,6 @@ class Appointment extends Component {
 
     handleChange = (event) => {
         let name, value = '';
-        console.log(event);
         if (event === null) {
             setTimeout(() => {
                 this.setState({ [this.state.openedMenu]: '' }, () => {
@@ -280,7 +293,7 @@ class Appointment extends Component {
 
         const countryCodesOptions = CountryCodes.map((code, index) => {
             return (
-                <option key={index} value={code.dial_code}>
+                <option key={index} value={code.code}>
                     {`${code.code} ${code.dial_code}`} 
                 </option>
             );
