@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    color: #1c1e21;
+    font-weight: 500;
+    background: #F5F6F7;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
