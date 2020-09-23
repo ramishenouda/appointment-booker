@@ -1,40 +1,57 @@
-import { v4 as uuidv4 } from 'uuid'
+import mongoose from 'mongoose'
+import appointment from '../models/appointment.js'
 
-let appointments = [
-    {
-        id: uuidv4(),
-        firstName: "Rami",
-        lastName: "Shenouda",
-        email: "ramishenouda@outlook.com",
-        countryCode: "+20",
-        phoneNumber: "1551874208",
-        operationCountries: "country1",
-        companyName: "Company1, Company2",
-        objective: "complaint",
-        description: "nonsense text :nerd:",
-        sentDate: "Wed Sep 23 2020 02:33:37 GMT+0200"
-    }
-]
+import Appointment from '../models/appointment.js' 
 
 export const getAppointments = (req, res) => {
-    res.send(appointments)
+    appointment.find({}).exec()
+        .then((result) => {
+            res.send(result);
+        }).catch((err) => {
+            res.sendStatus(500)
+        });
 }
 
 export const getAppointment = (req, res) => {
     const { id } = req.params;
-    const appointment = appointments.find(x => x.id === id);
-
-    res.send(appointment)
+    Appointment.findById(id).exec()
+        .then((result) => {
+            res.send(result);
+        }).catch((err) => {
+            res.sendStatus(404)
+        });
 }
 
 export const makeAppointment = (req, res) => {
-    appointments.push({id: uuidv4() , ...req.body})
-    res.sendStatus(200);
+    const requestBody = req.body;
+
+    const appointment = new Appointment({
+        _id: new mongoose.Types.ObjectId,
+        firstName: requestBody.firstName,
+        lastName: requestBody.lastName,
+        email: requestBody.email,
+        countryCode: requestBody.countryCode,
+        phoneNumber: requestBody.phoneNumber,
+        operationCountries: requestBody.operationCountries,
+        companyName: requestBody.companyName,
+        objective: requestBody.objective,
+        description: requestBody.description,
+    })
+
+    appointment.save()
+        .then((result) => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.sendStatus(500);
+        });
 }
 
 export const deleteAppointment = (req, res) => {
     const { id } = req.params;
-    appointments = appointments.filter(x => x.id !== id);
-
-    res.send(appointments)
+    Appointment.remove({ _id: id }).exec()
+        .then((result) => {
+            res.send(200)
+        }).catch((err) => {
+            res.send(500)
+        });
 }
