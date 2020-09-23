@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
 
-import CountryCodes from './country-codes'
 import backArrow from '../../assets/back-arrow.png'
 import infoIcon from '../../assets/info-icon-button.png'
 
@@ -16,24 +15,9 @@ function Appointment(props) {
         width: window.innerWidth < 768 ? '90%' : '40%',
     }
 
-    const options = [
-        { value: 'country1', label: 'Country1' },
-        { value: 'country2', label: 'Country2' },
-        { value: 'country3', label: 'Country3' }
-    ]
+    const state = props.state
 
-    const objectiveOptions = [
-        { value: 'complaint', label: 'Complaint' },
-        { value: 'suggestion', label: 'Suggestion' }
-    ]
-
-    const countryCodesOptions = CountryCodes.map(code => {
-        return (
-            <option key={code} value={code.dial_code}>
-                {`${code.code} ${code.dial_code}`} 
-            </option>
-        );
-    });
+    const unvalidStyle = '2px solid rgb(214, 68, 68)'
 
     return (
         <>
@@ -43,31 +27,73 @@ function Appointment(props) {
             <Form onSubmit={props.requestAppointment} className='book-appointment-form' style={style}>
                 <Form.Row>
                     <Form.Group as={Col}>
-                        <Form.Control type="text" name="firstName" placeholder="First Name" onChange={props.handleChange} />
+                        <Form.Control 
+                            type="text" 
+                            value={state.firstName} 
+                            name="firstName" 
+                            placeholder="First Name" 
+                            onChange={props.handleChange}
+                            style={{ borderBottom:state.validFirstName === false ? unvalidStyle : '' }}
+                        />
                     </Form.Group>
                     <Form.Group as={Col}>
-                        <Form.Control type="text" name="lastName" placeholder="Last Name" onChange={props.handleChange} />
+                        <Form.Control 
+                            type="text" 
+                            value={state.lastName} 
+                            name="lastName" 
+                            placeholder="Last Name" 
+                            onChange={props.handleChange} 
+                            style={{ borderBottom:state.validLastName === false ? unvalidStyle : '' }}
+                        />
                     </Form.Group>
                 </Form.Row>
 
                 <Form.Group>
-                    <Form.Control type="email" name="email" placeholder="Work Email Address" onChange={props.handleChange} />
+                    <Form.Control 
+                        type="email" 
+                        value={state.email} 
+                        name="email" 
+                        placeholder="Work Email Address" 
+                        onChange={props.handleChange} 
+                        style={{ borderBottom:state.validEmail === false ? unvalidStyle : '' }}
+                        />
                 </Form.Group>
 
                 <Form.Row>
                     <Form.Group as={Col} xs="auto">
-                        <Form.Control as="select" className="mr-sm-2" name="countryCode" custom onChange={props.handleChange}>
-                            { countryCodesOptions }
+                        <Form.Control 
+                            value={state.countryCode} 
+                            as="select" 
+                            className="mr-sm-2" 
+                            name="countryCode" 
+                            custom onChange={props.handleChange}
+                            style={{ borderBottom:state.validCountryCode === false ? unvalidStyle : '' }}
+                        >
+                            { props.countryCodesOptions }
                         </Form.Control>
                     </Form.Group>
                     <Form.Group as={Col}>
-                        <Form.Control type="number" name="phoneNumber" placeholder="Phone Number" onChange={props.handleChange} />
+                        <Form.Control 
+                            type="number" 
+                            value={state.phoneNumber} 
+                            name="phoneNumber" 
+                            placeholder="Phone Number" 
+                            onChange={props.handleChange} 
+                            style={{ borderBottom:state.validPhoneNumber === false ? unvalidStyle : '' }}
+                        />
                     </Form.Group>
                 </Form.Row>
                 
                 <Form.Row>
-                    <Form.Group as={Col}>
-                        <Select placeholder="Operation Countries" name="operationCountires" options={options} isMulti />
+                    <Form.Group as={Col} style={{ borderBottom: state.validOperationCountries === false ? unvalidStyle : '' }}>
+                        <Select
+                            onMenuOpen={() => props.setOpenedMenu('operationCountries')}
+                            placeholder="Operation Countries" 
+                            name="operationCountries" 
+                            onChange={props.handleChange} 
+                            options={props.countryOptions} 
+                            isMulti
+                        />
                     </Form.Group>
                     <Form.Group as={Col} xs={1} className="mt-1 mr-2">
                         <span>
@@ -77,11 +103,13 @@ function Appointment(props) {
                 </Form.Row>
 
                 <Form.Row>
-                    <Form.Group as={Col}>
+                    <Form.Group as={Col} style={{ borderBottom:state.validCompanyName === false ? unvalidStyle : '' }}>
                         <CreatableSelect 
                             placeholder="Company Name" 
-                            name="companyName" 
-                            options={options}
+                            name="companyName"
+                            onMenuOpen={() => props.setOpenedMenu('companyName')}
+                            options={props.companyOptions}
+                            onChange={props.handleChange}
                         />
                     </Form.Group>
                     <Form.Group as={Col} xs={1} className="mt-1 mr-2">
@@ -92,17 +120,27 @@ function Appointment(props) {
                 </Form.Row>
 
 
-                <Form.Group>
-                    <CreatableSelect 
+                <Form.Group style={{ borderBottom:state.validObjective === false ? unvalidStyle : '' }}>
+                    <CreatableSelect
+                        onMenuOpen={() => props.setOpenedMenu('objective')}
                         placeholder="Objective" 
-                        name="companyName" 
-                        options={objectiveOptions}
+                        name="objective" 
+                        options={props.objectiveOptions}
+                        onChange={props.handleChange}
                         isMulti
                     />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea" name="description" placeholder="More Details/Description" rows={3} onChange={props.handleChange} />
+                    <Form.Control 
+                        as="textarea" 
+                        value={state.description} 
+                        name="description" 
+                        placeholder="More Details/Description" 
+                        rows={3} 
+                        onChange={props.handleChange} 
+                        style={{ borderBottom:state.validDescription === false ? unvalidStyle : '' }}
+                    />
                 </Form.Group>
 
                 <Form.Group>
