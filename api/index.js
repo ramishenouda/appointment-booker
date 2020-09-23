@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+import cors from 'cors'
 
 import appointmentRoutes from './routes/appointment.js'
 import config from './config.js'
@@ -15,6 +16,12 @@ mongoose.connect(`mongodb+srv://admin:${config.dbPassword}@cluster0.4v6ca.mongod
 mongoose.connection.on('error', err => {
     console.log(err);
 })
+
+
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
 
 app.use(bodyParser.json());
 app.use('/api/appointments', appointmentRoutes);

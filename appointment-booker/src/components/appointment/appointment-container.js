@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 
 import CountryCodes from './country-codes'
 
+import { bookAppointment as BookAppointment } from '../../services/appointment-service'
+
 import AppointmentView from './appointment-view'
+import { Link } from 'react-router-dom';
 
 class Appointment extends Component {
     state = {
@@ -15,16 +18,36 @@ class Appointment extends Component {
         companyName: '',
         objective: '',
         description: '',
-        openedMenu: ''
+        openedMenu: '',
+        booked: false
     }
 
     requestAppointment = (event) => {
         event.preventDefault();
         if (this.validateForm()) {
-            console.log('booking');
-        } else {
-            console.log('error');
+            this.bookAppointment();
         }
+    }
+
+    bookAppointment = () => {
+        const appointmentInfo = {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            email: this.state.email,
+            countryCode: this.state.countryCode,
+            phoneNumber: this.state.phoneNumber,
+            operationCountries: this.state.operationCountries,
+            companyName: this.state.companyName,
+            objective: this.state.objective,
+            description: this.state.description
+        }
+
+        BookAppointment(appointmentInfo)
+            .then(() => {
+                this.setState({ booked: true })
+            }).catch((err) => {
+                console.log(err);
+            });
     }
 
     // todo find a better way in react to check for form validation
@@ -162,6 +185,15 @@ class Appointment extends Component {
                 </option>
             );
         });
+
+        if (this.state.booked)
+            return (
+                <div>
+                    <Link to="/">
+                        Go to Home page
+                    </Link>
+                </div>
+            )
         
         return (
             <AppointmentView

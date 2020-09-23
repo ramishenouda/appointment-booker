@@ -23,7 +23,12 @@ export const getAppointment = (req, res) => {
 }
 
 export const makeAppointment = (req, res) => {
-    const requestBody = req.body;
+    let requestBody;
+
+    if (req.body.appointmentInfo)
+        requestBody = req.body.appointmentInfo
+    else
+        requestBody = req.body
 
     const appointment = new Appointment({
         _id: new mongoose.Types.ObjectId,
