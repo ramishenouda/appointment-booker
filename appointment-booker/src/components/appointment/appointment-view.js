@@ -111,7 +111,7 @@ function Appointment(props) {
                         />
                     </Form.Group>
                     <Form.Group as={Col} xs={1} className="mt-1 mr-2">
-                        <span>
+                        <span className='info-icon' onClick={() => props.popUpMessage('you could select more than one country.')}>
                             <img src={infoIcon} width='50px' alt="infoIcont" />
                         </span>
                     </Form.Group>
@@ -130,7 +130,7 @@ function Appointment(props) {
                         />
                     </Form.Group>
                     <Form.Group as={Col} xs={1} className="mt-1 mr-2">
-                        <span>
+                        <span className='info-icon' onClick={() => props.popUpMessage('you could select/ add your company.')}>
                             <img src={infoIcon} width='50px' alt="infoIcont" />
                         </span>
                     </Form.Group>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Notify from '../../services/sweetalert-service'
 
 import CountryCodes from './country-codes'
 
@@ -8,15 +9,15 @@ import AppointmentView from './appointment-view'
 
 class Appointment extends Component {
     state = {
-        firstName: 'Ramishenouda@yahoo.com',
-        lastName: 'Ramishenouda@yahoo.com',
-        email: 'Ramishenouda@yahoo.com',
+        firstName: '',
+        lastName: '',
+        email: '',
         countryCode: '+20',
-        phoneNumber: '1551874208',
+        phoneNumber: '',
         operationCountries: '',
         companyName: '',
         objective: '',
-        description: 'test',
+        description: '',
         openedMenu: '',
         chooseCompany: false,
         booked: false
@@ -75,6 +76,7 @@ class Appointment extends Component {
             .then(() => {
                 this.setState({ booked: true })
             }).catch((err) => {
+                Notify.error('Ops...', 'Error while booking the appointment. Please try again later.')
                 console.log(err);
             });
     }
@@ -151,6 +153,10 @@ class Appointment extends Component {
 
     setOpenedMenu = (name) => {
         this.setState({ openedMenu: name })
+    }
+
+    popUpMessage = (message) => {
+        Notify.info(message);
     }
 
     handleChange = (event) => {
@@ -291,6 +297,7 @@ class Appointment extends Component {
                 objectiveOptions={objectiveOptions}
                 state={this.state}
                 booked={this.state.booked}
+                popUpMessage={this.popUpMessage}
             />
         );
     }
