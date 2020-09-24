@@ -47,36 +47,43 @@ class Appointment extends Component {
                 }
             }).finally(() => {
                 if (validForm) {
-                    this.bookAppointment();
-        
-                    this.state.operationCountries.split(',').forEach(country => {
-                        country = country.trim()
-        
-                        const setValue = new Set();
-        
-                        let currentValue = localStorage.getItem(country)
-                        let value = this.state.companyName.trim();
-        
-                        if (!currentValue) {
-                            localStorage.setItem(country, value);
-                        } else {
-                            currentValue += `, ${value}`;
-                            
-                            currentValue.split(',').map(x => {
-                                setValue.add(x.trim())
-                                return x;
+                    Notify.confirm('Confirm your request', '', 'Request', 'Cancel')
+                        .then((result) => {
+                            if (!result.isConfirmed) {
+                                return;
+                            }
+
+                            this.bookAppointment();
+                
+                            this.state.operationCountries.split(',').forEach(country => {
+                                country = country.trim()
+                
+                                const setValue = new Set();
+                
+                                let currentValue = localStorage.getItem(country)
+                                let value = this.state.companyName.trim();
+                
+                                if (!currentValue) {
+                                    localStorage.setItem(country, value);
+                                } else {
+                                    currentValue += `, ${value}`;
+                                    
+                                    currentValue.split(',').map(x => {
+                                        setValue.add(x.trim())
+                                        return x;
+                                    });
+                                    
+                                    value = '';
+                                    setValue.forEach(x => {
+                                        value += x + ','
+                                    })
+                
+                                    value = value.slice(0, -1);
+                
+                                    localStorage.setItem(country, value);
+                                }
                             });
-                            
-                            value = '';
-                            setValue.forEach(x => {
-                                value += x + ','
-                            })
-        
-                            value = value.slice(0, -1);
-        
-                            localStorage.setItem(country, value);
-                        }
-                    });
+                        })
                 }
             })
     }
@@ -104,8 +111,9 @@ class Appointment extends Component {
     }
     
     // todo find a better way in react to check for form validation
-    async validateForm () {
+    validateForm = () => {
         const re = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
+        const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         const emailValidation = new RegExp(re).test(this.state.email);
     
         let validForm = true;
@@ -121,14 +129,32 @@ class Appointment extends Component {
         }
 
         if (this.state.firstName.length > 1) {
-            this.setState({ validFirstName: true })
+            let validFirstName = true;
+            for (let i = 0; i < this.state.firstName.length; i++) {
+                const element = this.state.firstName[i];
+                if (numbers.includes(element)) {
+                    validFirstName = false;
+                    validForm = false
+                    break;
+                }
+            }
+            this.setState({ validFirstName: validFirstName })
         } else {
             this.setState({ validFirstName: false })
             validForm = false
         }
 
         if (this.state.lastName.length > 1) {
-            this.setState({ validLastName: true })
+            let validLastName = true;
+            for (let i = 0; i < this.state.lastName.length; i++) {
+                const element = this.state.lastName[i];
+                if (numbers.includes(element)) {
+                    validLastName = false;
+                    validForm = false
+                    break;
+                }
+            }
+            this.setState({ validLastName: validLastName })
         } else {
             this.setState({ validLastName: false })
             validForm = false

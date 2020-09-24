@@ -86,3 +86,12 @@ input[type=number] {
 .info-icon:hover {
     opacity: 0.6;
 }
+
+.title {
+    position: absolute;
+    font-weight: bold;
+    font-size: x-large;
+    top: 0;
+    width: 100%;
+    text-align: center;
+}

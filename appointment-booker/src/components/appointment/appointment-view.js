@@ -38,6 +38,9 @@ function Appointment(props) {
             <Link to="/" className='back-arrow ml-3' >
                 <img src={backArrow} width='50px' alt='backArrow' />
             </Link>
+            <div className="title">
+                Company Information
+            </div>
             <Form onSubmit={props.requestAppointment} className='book-appointment-form' style={style}>
                 <Form.Row>
                     <Form.Group as={Col}>

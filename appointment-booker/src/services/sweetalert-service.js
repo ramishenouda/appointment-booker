@@ -15,3 +15,12 @@ export const error = (title, text) => {
         text: text,
     })
 }
+
+export const confirm = (title, text, confirmButtonText, CancelButtonText) => {
+    return Swal.fire({
+        title: title,
+        showCancelButton: true,
+        confirmButtonText: confirmButtonText,
+        cancelButtonText: CancelButtonText
+    })
+}
