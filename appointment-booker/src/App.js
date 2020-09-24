@@ -6,7 +6,7 @@ import Home from './components/home/home-container';
 
 function App() {
     return (
-        <BrowserRouter className="App">
+        <BrowserRouter basename="/" className="App">
             <Switch>
                 <Route exact path="/">
                     <Home />
