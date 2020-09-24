@@ -21,7 +21,8 @@ class Appointment extends Component {
         description: '',
         openedMenu: '',
         chooseCompany: false,
-        booked: false
+        booked: false,
+        booking: false
     }
 
     requestAppointment = (event) => {
@@ -52,6 +53,8 @@ class Appointment extends Component {
                             if (!result.isConfirmed) {
                                 return;
                             }
+
+                            this.setState({ booking: true})
 
                             this.bookAppointment();
                 
@@ -107,6 +110,8 @@ class Appointment extends Component {
             }).catch((err) => {
                 Notify.error('Ops...', 'Error while booking the appointment. Please try again later.')
                 console.log(err);
+            }).finally(() => {
+                this.setState({ booking: false })
             });
     }
     

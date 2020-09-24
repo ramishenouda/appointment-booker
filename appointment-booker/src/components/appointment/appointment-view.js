@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Col, Container, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import LoaderView from '../loader/loader-view'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
 
@@ -166,7 +167,15 @@ function Appointment(props) {
                 </Form.Group>
 
                 <Form.Group>
-                    <Button type="submit" className="btn btn-primary">Request An Appointment</Button>
+                    {
+                        !state.booking ? (
+                            <button type="submit" className="sub-button">Request an appointment</button>
+                        ) : (
+                            <center className="p-0 m-0">
+                                <LoaderView width={'30px'} height={'30px'}/>
+                            </center>
+                        )
+                    }
                 </Form.Group>
             </Form>
         </>
