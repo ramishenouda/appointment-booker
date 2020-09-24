@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const APIUri = 'http://localhost:5000/api'
+const APIUri = 'https://appbooker24.herokuapp.com/api'
 
 export async function getAppointments() {
     const options = {
