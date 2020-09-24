@@ -1,7 +1,20 @@
 import mongoose from 'mongoose'
-import appointment from '../models/appointment.js'
+import nodemailer from 'nodemailer'
 
+import appointment from '../models/appointment.js'
 import Appointment from '../models/appointment.js' 
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    service: 'gmail',
+    secure: false, // use SSL
+    auth: {
+        user: 'bookapp24@gmail.com',
+        pass: 522762413791
+    },
+    logger: true
+});
+
 
 export const getAppointments = (req, res) => {
     appointment.find({}).exec()
@@ -45,6 +58,42 @@ export const makeAppointment = (req, res) => {
 
     appointment.save()
         .then((result) => {
+            var mailOptions = {
+                from: 'bookapp24@gmail.com',
+                to: requestBody.email,
+                subject: 'We got your request',
+                html: (`
+                    <p>We got your information</p>
+                    <p>we will back to you soon</p>
+                    <p>FirstName: ${requestBody.firstName}</p>
+                    <p>LastName: ${requestBody.lastName}</p>
+                    <p>Email: ${requestBody.email}</p>
+                    <p>PhoneNumber: ${requestBody.countryCode} ${requestBody.phoneNumber}</p>
+                    <p>Operation countries: ${requestBody.operationCountries}</p>
+                    <p>Company name: ${requestBody.companyName}</p>
+                    <p>Objective: ${requestBody.objective}</p>
+                    <p>Description: ${requestBody.description}</p>
+                    <p>Request date: ${new Date()}</p>
+                `)
+            };
+            
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+
+            mailOptions.to = 'bookapp24@gmail.com';
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+
             res.sendStatus(200);
         }).catch((err) => {
             res.sendStatus(500);
